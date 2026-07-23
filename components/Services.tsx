@@ -11,7 +11,7 @@ export default function Services() {
       <div className="relative mx-auto max-w-5xl">
         <div className="flex flex-col items-center justify-center gap-4">
           <Divider />
-          <h2 className="font-vintage text-center text-3xl font-bold text-gold md:text-4xl">
+          <h2 className="font-vintage text-center text-2xl font-bold text-gold sm:text-3xl md:text-4xl">
             Nuestros servicios
           </h2>
           <p className="mx-auto mt-2 max-w-2xl text-center text-cream/80">

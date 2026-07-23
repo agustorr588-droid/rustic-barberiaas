@@ -90,15 +90,15 @@ export default function AppointmentForm({ onSaved }: { onSaved: () => void }) {
     >
       <div className="absolute right-0 top-0 h-24 w-24 -translate-y-1/2 translate-x-1/2 rounded-full bg-gold/5 blur-2xl" />
 
-      <div className="relative flex items-center gap-3">
+      <div className="relative flex items-start gap-3 sm:items-center">
         <div className="rounded-full border border-gold/30 bg-gold/10 p-2.5 text-gold">
           <Sparkles className="h-6 w-6" />
         </div>
         <div>
-          <h3 className="font-vintage text-2xl font-semibold text-gold md:text-3xl">
+          <h3 className="font-vintage text-xl font-semibold text-gold sm:text-2xl md:text-3xl">
             Agendá tu turno
           </h3>
-          <p className="text-sm text-cream/70">
+          <p className="text-xs text-cream/70 sm:text-sm">
             Completá el formulario y reservá tu lugar.
           </p>
         </div>

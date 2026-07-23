@@ -13,13 +13,13 @@ export default function Footer() {
           <Divider />
         </div>
 
-        <div className="grid gap-10 md:grid-cols-3">
+        <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3">
           <div className="frame-ornate card-glow rounded-xl bg-wood-800/50 p-6">
             <div className="flex items-center gap-3">
               <div className="rounded-full border border-gold/30 bg-gold/10 p-2 text-gold">
                 <Scissors className="h-5 w-5" />
               </div>
-              <h4 className="font-vintage text-2xl font-bold text-gold">{business.name}</h4>
+              <h4 className="font-vintage text-xl font-bold text-gold sm:text-2xl">{business.name}</h4>
             </div>
             <p className="mt-3 text-sm text-cream/70">{business.tagline}</p>
           </div>
@@ -50,7 +50,7 @@ export default function Footer() {
 
         <div className="mx-auto mt-12 max-w-5xl text-center text-xs text-cream/40">
           <p>© {new Date().getFullYear()} {business.fullName}. Diseño rústico inspirado en la tradición.</p>
-          <p className="mt-1 flex items-center justify-center gap-2 text-gold/50">
+          <p className="mt-1 flex flex-wrap items-center justify-center gap-2 text-gold/50">
             <Instagram className="h-3.5 w-3.5" />
             <Facebook className="h-3.5 w-3.5" />
             <span>Seguinos en redes</span>

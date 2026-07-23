@@ -43,10 +43,10 @@ export default function Gallery() {
             <span className="text-sm font-semibold uppercase tracking-wider">Galería</span>
             <Star className="h-5 w-5" />
           </div>
-          <h2 className="font-vintage text-center text-3xl font-bold text-gold md:text-4xl">
+          <h2 className="font-vintage text-center text-2xl font-bold text-gold sm:text-3xl md:text-4xl">
             Estilo en cada corte
           </h2>
-          <p className="mx-auto max-w-2xl text-center text-cream/70">
+          <p className="mx-auto max-w-2xl px-2 text-center text-sm text-cream/70 sm:text-base">
             Mirá algunos de nuestros trabajos y conocé nuestra forma de trabajar.
           </p>
         </div>

@@ -110,15 +110,15 @@ export default function BarberDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-wood-950 px-4 py-24 pt-32">
+    <div className="min-h-screen bg-wood-950 px-4 py-20 pt-24 sm:py-24 sm:pt-32">
       <div className="pointer-events-none fixed inset-0 bg-wood-pattern opacity-10" />
       <div className="relative mx-auto max-w-5xl">
         <header className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="font-vintage text-3xl font-bold text-gold md:text-4xl">
+            <h1 className="font-vintage text-2xl font-bold text-gold sm:text-3xl md:text-4xl">
               Agenda de {barber.name}
             </h1>
-            <p className="mt-1 text-cream/70">
+            <p className="mt-1 text-sm text-cream/70 sm:text-base">
               Horarios ocupados y libres del día seleccionado.
             </p>
           </div>

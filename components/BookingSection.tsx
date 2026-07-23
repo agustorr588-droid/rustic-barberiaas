@@ -19,10 +19,10 @@ export default function BookingSection() {
       <div className="relative mx-auto max-w-5xl">
         <div className="flex flex-col items-center justify-center gap-4">
           <Divider />
-          <h2 className="font-vintage text-center text-4xl font-bold text-gold md:text-5xl">
+          <h2 className="font-vintage text-center text-3xl font-bold text-gold sm:text-4xl md:text-5xl">
             Reservá tu turno
           </h2>
-          <p className="mx-auto mt-2 max-w-2xl text-center text-lg text-cream/80">
+          <p className="mx-auto mt-2 max-w-2xl px-2 text-center text-base text-cream/80 sm:text-lg">
             Elegí el servicio, día y horario que prefieras. Te esperamos en Rustic.
           </p>
           <div className="mt-2 flex items-center gap-2 rounded-full border border-gold/20 bg-gold/10 px-4 py-1 text-sm text-gold">

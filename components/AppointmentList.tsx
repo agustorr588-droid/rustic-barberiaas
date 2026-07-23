@@ -52,7 +52,7 @@ export default function AppointmentList({
       <div className="rounded-full border border-gold/30 bg-gold/10 p-2.5 text-gold">
         <ListChecks className="h-6 w-6" />
       </div>
-      <h3 className="font-vintage text-2xl font-semibold text-gold md:text-3xl">
+      <h3 className="font-vintage text-xl font-semibold text-gold sm:text-2xl md:text-3xl">
         Turnos agendados
       </h3>
     </div>

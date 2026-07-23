@@ -8,9 +8,9 @@ export const metadata = {
 
 export default function LoginPage() {
   return (
-    <main className="min-h-screen bg-wood-950 px-4 py-24 pt-32">
+    <main className="min-h-screen bg-wood-950 px-4 py-20 pt-24 sm:py-24 sm:pt-32">
       <div className="absolute inset-0 bg-wood-pattern opacity-10" />
-      <div className="relative mx-auto max-w-md">
+      <div className="relative mx-auto w-full max-w-md">
         <BarberLogin />
       </div>
     </main>

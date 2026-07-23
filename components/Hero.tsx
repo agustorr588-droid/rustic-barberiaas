@@ -8,7 +8,7 @@ export default function Hero() {
     <section className="relative flex min-h-screen flex-col items-center justify-center px-4 py-20 text-center">
       <div className="pointer-events-none absolute inset-0 bg-wood-pattern opacity-20" />
 
-      <div className="gold-border relative mx-auto mb-8 h-64 w-64 overflow-hidden rounded-full p-1 md:h-80 md:w-80">
+      <div className="gold-border relative mx-auto mb-6 h-48 w-48 overflow-hidden rounded-full p-1 sm:h-64 sm:w-64 md:mb-8 md:h-80 md:w-80">
         <Image
           src={business.logo}
           alt={`Logo ${business.fullName}`}
@@ -18,10 +18,10 @@ export default function Hero() {
         />
       </div>
 
-      <h1 className="font-vintage text-5xl font-bold text-gold md:text-7xl">
+      <h1 className="font-vintage text-4xl font-bold text-gold sm:text-5xl md:text-7xl">
         {business.name}
       </h1>
-      <p className="mt-3 max-w-xl text-lg text-cream/90 md:text-xl">
+      <p className="mt-3 max-w-xl px-2 text-base text-cream/90 sm:text-lg md:text-xl">
         {business.tagline}
       </p>
 
