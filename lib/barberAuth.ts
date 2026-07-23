@@ -35,11 +35,19 @@ export async function loginBarber(email: string, password: string): Promise<Logi
   }
 
   // Buscamos el perfil sin importar mayúsculas/minúsculas
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('barber_profiles')
     .select('barber_id, name, email')
     .ilike('email', cleanEmail)
-    .single()
+    .maybeSingle()
+
+  console.log('[loginBarber] cleanEmail:', cleanEmail)
+  console.log('[loginBarber] profile:', profile)
+  console.log('[loginBarber] profileError:', profileError)
+
+  if (profileError) {
+    return { success: false, message: `Error al leer el perfil: ${profileError.message}` }
+  }
 
   if (!profile) {
     return { success: false, message: 'Este usuario no está vinculado a ningún barbero. Verificá que exista en la tabla barber_profiles.' }
