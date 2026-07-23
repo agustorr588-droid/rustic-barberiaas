@@ -1,7 +1,7 @@
 'use client'
 
-import { useMemo } from 'react'
-import { Trash2, Calendar, Clock, User, DollarSign, ListChecks } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Trash2, Calendar, Clock, User, DollarSign, ListChecks, Loader2 } from 'lucide-react'
 import { services } from '@/lib/config'
 import { getAppointments, deleteAppointment, formatDate, type Appointment } from '@/lib/appointments'
 
@@ -12,14 +12,36 @@ export default function AppointmentList({
   refresh: number
   onSaved: () => void
 }) {
-  const appointments = useMemo(() => {
-    const items = getAppointments()
-    return items.sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`))
+  const [appointments, setAppointments] = useState<Appointment[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+    getAppointments()
+      .then((items) => {
+        if (!cancelled) setAppointments(items)
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Error al cargar turnos.')
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
   }, [refresh])
 
-  const handleDelete = (id: string) => {
-    deleteAppointment(id)
-    onSaved()
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteAppointment(id)
+      onSaved()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo cancelar el turno.')
+    }
   }
 
   const serviceName = (id: string) => services.find((s) => s.id === id)?.name ?? id
@@ -34,6 +56,27 @@ export default function AppointmentList({
       </h3>
     </div>
   )
+
+  if (loading) {
+    return (
+      <div className="frame-ornate card-glow flex min-h-[280px] flex-col items-center justify-center rounded-2xl bg-wood-800 p-6 md:p-8">
+        {header}
+        <Loader2 className="mt-8 h-8 w-8 animate-spin text-gold" />
+        <p className="mt-3 text-sm text-cream/60">Cargando turnos...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="frame-ornate card-glow rounded-2xl bg-wood-800 p-6 md:p-8">
+        {header}
+        <div className="mt-8 rounded-xl border border-red-500/30 bg-red-900/20 p-6 text-center text-red-200">
+          <p>{error}</p>
+        </div>
+      </div>
+    )
+  }
 
   if (appointments.length === 0) {
     return (

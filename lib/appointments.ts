@@ -1,4 +1,4 @@
-import { appointment } from './config'
+import { supabase } from './supabase'
 
 export type Appointment = {
   id: string
@@ -8,50 +8,83 @@ export type Appointment = {
   time: string
   serviceId: string
   price: number
-  createdAt: number
+  created_at?: string
 }
 
-export function getAppointments(): Appointment[] {
-  if (typeof window === 'undefined') return []
-  try {
-    const raw = window.localStorage.getItem(appointment.storageKey)
-    return raw ? (JSON.parse(raw) as Appointment[]) : []
-  } catch {
-    return []
-  }
-}
-
-export function saveAppointments(items: Appointment[]) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(appointment.storageKey, JSON.stringify(items))
-}
-
-export function addAppointment(appointmentData: Omit<Appointment, 'id' | 'createdAt'>) {
-  const items = getAppointments()
-  const newItem: Appointment = {
-    ...appointmentData,
-    id: crypto.randomUUID(),
-    createdAt: Date.now(),
-  }
-  saveAppointments([...items, newItem])
-  return newItem
-}
-
-export function deleteAppointment(id: string) {
-  const items = getAppointments().filter((a) => a.id !== id)
-  saveAppointments(items)
-}
-
-export function isSlotAvailable(date: string, time: string, excludeId?: string) {
-  return !getAppointments().some((a) => a.date === date && a.time === time && a.id !== excludeId)
-}
+export type AppointmentInsert = Omit<Appointment, 'id' | 'created_at'>
 
 export function formatDate(dateString: string) {
+  if (!dateString) return ''
   const [year, month, day] = dateString.split('-').map(Number)
-  return new Date(year, month - 1, day).toLocaleDateString('es-UY', {
+  const date = new Date(year, month - 1, day)
+  return date.toLocaleDateString('es-UY', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   })
+}
+
+export async function getAppointments(): Promise<Appointment[]> {
+  const { data, error } = await supabase
+    .from('appointments')
+    .select('*')
+    .order('date', { ascending: true })
+    .order('time', { ascending: true })
+
+  if (error) {
+    console.error('Error al obtener turnos:', error)
+    throw new Error('No se pudieron cargar los turnos.')
+  }
+
+  return (data || []).map((item) => ({
+    id: item.id,
+    name: item.name,
+    phone: item.phone,
+    date: item.date,
+    time: item.time,
+    serviceId: item.service_id,
+    price: item.price,
+    created_at: item.created_at,
+  }))
+}
+
+export async function addAppointment(appointment: AppointmentInsert): Promise<void> {
+  const { error } = await supabase.from('appointments').insert({
+    name: appointment.name,
+    phone: appointment.phone,
+    date: appointment.date,
+    time: appointment.time,
+    service_id: appointment.serviceId,
+    price: appointment.price,
+  })
+
+  if (error) {
+    console.error('Error al guardar turno:', error)
+    throw new Error('No se pudo guardar el turno. Intentá de nuevo.')
+  }
+}
+
+export async function deleteAppointment(id: string): Promise<void> {
+  const { error } = await supabase.from('appointments').delete().eq('id', id)
+
+  if (error) {
+    console.error('Error al eliminar turno:', error)
+    throw new Error('No se pudo cancelar el turno.')
+  }
+}
+
+export async function isSlotAvailable(date: string, time: string): Promise<boolean> {
+  const { count, error } = await supabase
+    .from('appointments')
+    .select('*', { count: 'exact', head: true })
+    .eq('date', date)
+    .eq('time', time)
+
+  if (error) {
+    console.error('Error al verificar disponibilidad:', error)
+    return false
+  }
+
+  return count === 0
 }

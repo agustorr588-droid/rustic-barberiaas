@@ -31,6 +31,32 @@ export const services = [
 ]
 ```
 
+## Base de datos (Supabase)
+
+Las reservas se guardan en una base de datos de **Supabase** en lugar del navegador.
+
+Si querés usar tu propio proyecto de Supabase, creá una tabla llamada `appointments` con estas columnas:
+
+| Columna     | Tipo      | Notas                           |
+|-------------|-----------|---------------------------------|
+| id          | uuid      | primary key, default gen_random_uuid() |
+| created_at  | timestamp | default now()                   |
+| name        | text      |                                 |
+| phone       | text      |                                 |
+| date        | text      | formato YYYY-MM-DD              |
+| time        | text      | formato HH:MM                   |
+| service_id  | text      |                                 |
+| price       | int4      |                                 |
+
+Y activá las políticas de seguridad (RLS) para permitir lectura, inserción y eliminación pública.
+
+Las credenciales de conexión están en `lib/supabase.ts` y también se pueden configurar mediante variables de entorno:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://kdshmqncqrucbeedcspw.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_NfrPjiUp-0iMPPP0KruAqA_I7JPjGZ7
+```
+
 ## Cómo correrlo en local
 
 1. Asegurate de tener **Node.js** instalado (versión LTS recomendada).
@@ -114,6 +140,6 @@ rustic-barber/
 
 ## Notas importantes
 
-- Las reservas se guardan en el `localStorage` de cada navegador. Si el cliente cambia de dispositivo o limpia datos, los turnos se pierden.
-- Para un sistema de agendas real con base de datos, sería necesario agregar un backend (por ejemplo, una API con una base de datos como Supabase, MongoDB o Firebase).
+- Las reservas se guardan en una base de datos de **Supabase**, por lo que persisten incluso si el usuario cierra el navegador o cambia de dispositivo.
+- Si Supabase no está disponible, el formulario mostrará un mensaje de error y no se podrán confirmar nuevos turnos.
 - El diseño se adaptó a la paleta del logo: madera oscura, dorado y detalles en azul petróleo.

@@ -17,6 +17,7 @@ export default function AppointmentForm({ onSaved }: { onSaved: () => void }) {
   })
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const selectedService = useMemo(
     () => services.find((s) => s.id === form.serviceId),
@@ -40,33 +41,44 @@ export default function AppointmentForm({ onSaved }: { onSaved: () => void }) {
     if (status !== 'idle') setStatus('idle')
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (loading) return
+
     if (!form.name.trim() || !form.phone.trim() || !form.date || !form.time || !form.serviceId) {
       setStatus('error')
       setMessage('Completá todos los campos para confirmar tu turno.')
       return
     }
 
-    if (!isSlotAvailable(form.date, form.time)) {
+    setLoading(true)
+    try {
+      const available = await isSlotAvailable(form.date, form.time)
+      if (!available) {
+        setStatus('error')
+        setMessage('Ese horario ya está reservado. Por favor elegí otro.')
+        return
+      }
+
+      await addAppointment({
+        name: form.name.trim(),
+        phone: form.phone.trim(),
+        date: form.date,
+        time: form.time,
+        serviceId: form.serviceId,
+        price: selectedService?.price ?? 0,
+      })
+
+      setStatus('success')
+      setMessage('¡Turno reservado con éxito! Te esperamos en Rustic.')
+      setForm({ name: '', phone: '', date: today, time: '', serviceId: services[0]?.id ?? '' })
+      onSaved()
+    } catch (err) {
       setStatus('error')
-      setMessage('Ese horario ya está reservado. Por favor elegí otro.')
-      return
+      setMessage(err instanceof Error ? err.message : 'Ocurrió un error al guardar el turno.')
+    } finally {
+      setLoading(false)
     }
-
-    addAppointment({
-      name: form.name.trim(),
-      phone: form.phone.trim(),
-      date: form.date,
-      time: form.time,
-      serviceId: form.serviceId,
-      price: selectedService?.price ?? 0,
-    })
-
-    setStatus('success')
-    setMessage('¡Turno reservado con éxito! Te esperamos en Rustic.')
-    setForm({ name: '', phone: '', date: today, time: '', serviceId: services[0]?.id ?? '' })
-    onSaved()
   }
 
   return (
@@ -194,10 +206,20 @@ export default function AppointmentForm({ onSaved }: { onSaved: () => void }) {
 
       <button
         type="submit"
-        className="btn-rustic mt-6 w-full text-lg font-bold shadow-[0_0_20px_rgba(197,160,89,0.25)]"
+        disabled={loading}
+        className="btn-rustic mt-6 w-full text-lg font-bold shadow-[0_0_20px_rgba(197,160,89,0.25)] disabled:opacity-60 disabled:cursor-not-allowed"
       >
-        <Sparkles className="h-5 w-5" />
-        Confirmar reserva
+        {loading ? (
+          <span className="inline-flex items-center gap-2">
+            <span className="h-5 w-5 animate-spin rounded-full border-2 border-wood-900 border-t-transparent" />
+            Guardando...
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-2">
+            <Sparkles className="h-5 w-5" />
+            Confirmar reserva
+          </span>
+        )}
       </button>
     </form>
   )
