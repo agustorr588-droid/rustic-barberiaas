@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { CalendarDays, Clock, User, Phone, CheckCircle } from 'lucide-react'
+import { CalendarDays, Clock, User, Phone, CheckCircle, Sparkles } from 'lucide-react'
 import { services, appointment as appointmentConfig } from '@/lib/config'
 import { addAppointment, isSlotAvailable, type Appointment } from '@/lib/appointments'
 
@@ -70,15 +70,29 @@ export default function AppointmentForm({ onSaved }: { onSaved: () => void }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="wood-card rounded-2xl p-6 md:p-8">
-      <h3 className="font-vintage text-2xl font-semibold text-gold">Agendá tu turno</h3>
-      <p className="mt-2 text-sm text-cream/70">
-        Completá el formulario y reservá tu lugar. Los datos se guardan en este navegador.
-      </p>
+    <form
+      onSubmit={handleSubmit}
+      className="frame-ornate card-glow relative overflow-hidden rounded-2xl bg-wood-800 p-6 md:p-8"
+    >
+      <div className="absolute right-0 top-0 h-24 w-24 -translate-y-1/2 translate-x-1/2 rounded-full bg-gold/5 blur-2xl" />
 
-      <div className="mt-6 grid gap-5 md:grid-cols-2">
+      <div className="relative flex items-center gap-3">
+        <div className="rounded-full border border-gold/30 bg-gold/10 p-2.5 text-gold">
+          <Sparkles className="h-6 w-6" />
+        </div>
+        <div>
+          <h3 className="font-vintage text-2xl font-semibold text-gold md:text-3xl">
+            Agendá tu turno
+          </h3>
+          <p className="text-sm text-cream/70">
+            Completá el formulario y reservá tu lugar.
+          </p>
+        </div>
+      </div>
+
+      <div className="relative mt-8 grid gap-5 md:grid-cols-2">
         <div className="md:col-span-2">
-          <label className="mb-1 flex items-center gap-2 text-sm font-medium text-cream/90">
+          <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-cream">
             <User className="h-4 w-4 text-gold" /> Nombre completo
           </label>
           <input
@@ -92,7 +106,7 @@ export default function AppointmentForm({ onSaved }: { onSaved: () => void }) {
         </div>
 
         <div>
-          <label className="mb-1 flex items-center gap-2 text-sm font-medium text-cream/90">
+          <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-cream">
             <Phone className="h-4 w-4 text-gold" /> Teléfono
           </label>
           <input
@@ -106,7 +120,7 @@ export default function AppointmentForm({ onSaved }: { onSaved: () => void }) {
         </div>
 
         <div>
-          <label className="mb-1 flex items-center gap-2 text-sm font-medium text-cream/90">
+          <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-cream">
             <CalendarDays className="h-4 w-4 text-gold" /> Fecha
           </label>
           <input
@@ -120,14 +134,14 @@ export default function AppointmentForm({ onSaved }: { onSaved: () => void }) {
         </div>
 
         <div>
-          <label className="mb-1 flex items-center gap-2 text-sm font-medium text-cream/90">
+          <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-cream">
             <Clock className="h-4 w-4 text-gold" /> Horario
           </label>
           <select
             name="time"
             value={form.time}
             onChange={handleChange}
-            className="input-wood appearance-none"
+            className="select-wood appearance-none"
           >
             <option value="">Seleccionar hora</option>
             {timeOptions.map((t) => (
@@ -139,14 +153,14 @@ export default function AppointmentForm({ onSaved }: { onSaved: () => void }) {
         </div>
 
         <div>
-          <label className="mb-1 flex items-center gap-2 text-sm font-medium text-cream/90">
+          <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-cream">
             <CheckCircle className="h-4 w-4 text-gold" /> Servicio
           </label>
           <select
             name="serviceId"
             value={form.serviceId}
             onChange={handleChange}
-            className="input-wood appearance-none"
+            className="select-wood appearance-none"
           >
             {services.map((s) => (
               <option key={s.id} value={s.id}>
@@ -157,9 +171,9 @@ export default function AppointmentForm({ onSaved }: { onSaved: () => void }) {
         </div>
 
         <div className="flex items-end">
-          <div className="w-full rounded-lg border border-gold/20 bg-gold/10 px-4 py-3 text-center">
-            <span className="text-sm text-cream/70">Total aproximado</span>
-            <p className="text-2xl font-bold text-gold">
+          <div className="w-full rounded-xl border-2 border-gold/30 bg-gradient-to-br from-gold/20 to-gold/5 px-4 py-3 text-center shadow-inner">
+            <span className="text-xs uppercase tracking-wider text-cream/70">Total aproximado</span>
+            <p className="font-vintage text-3xl font-bold text-gold drop-shadow-sm">
               ${selectedService?.price ?? 0}
             </p>
           </div>
@@ -168,17 +182,21 @@ export default function AppointmentForm({ onSaved }: { onSaved: () => void }) {
 
       {status !== 'idle' && (
         <div
-          className={`mt-5 rounded-lg px-4 py-3 text-sm font-medium ${
+          className={`relative mt-5 rounded-xl border px-4 py-3 text-sm font-semibold ${
             status === 'success'
-              ? 'bg-green-900/30 text-green-200'
-              : 'bg-red-900/30 text-red-200'
+              ? 'border-green-500/30 bg-green-900/30 text-green-200'
+              : 'border-red-500/30 bg-red-900/30 text-red-200'
           }`}
         >
           {message}
         </div>
       )}
 
-      <button type="submit" className="btn-rustic mt-6 w-full">
+      <button
+        type="submit"
+        className="btn-rustic mt-6 w-full text-lg font-bold shadow-[0_0_20px_rgba(197,160,89,0.25)]"
+      >
+        <Sparkles className="h-5 w-5" />
         Confirmar reserva
       </button>
     </form>

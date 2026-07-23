@@ -1,10 +1,13 @@
 import Image from 'next/image'
-import { Phone, MapPin, Clock, Scissors } from 'lucide-react'
+import { Phone, MapPin, Clock, Scissors, ChevronDown } from 'lucide-react'
 import { business } from '@/lib/config'
+import Divider from './Divider'
 
 export default function Hero() {
   return (
     <section className="relative flex min-h-screen flex-col items-center justify-center px-4 py-20 text-center">
+      <div className="pointer-events-none absolute inset-0 bg-wood-pattern opacity-20" />
+
       <div className="gold-border relative mx-auto mb-8 h-64 w-64 overflow-hidden rounded-full p-1 md:h-80 md:w-80">
         <Image
           src={business.logo}
@@ -22,7 +25,11 @@ export default function Hero() {
         {business.tagline}
       </p>
 
-      <div className="mt-10 grid gap-4 sm:grid-cols-3">
+      <div className="mt-4">
+        <Divider />
+      </div>
+
+      <div className="mt-6 grid gap-4 sm:grid-cols-3">
         <a
           href={`tel:${business.phone.replace(/\s/g, '')}`}
           className="wood-card flex items-center gap-3 rounded-xl px-5 py-4 text-cream/90 gold-hover"
@@ -47,10 +54,18 @@ export default function Hero() {
 
       <a
         href="#reservar"
-        className="btn-rustic mt-12 text-lg"
+        className="btn-rustic z-10 mt-12 text-lg shadow-[0_0_25px_rgba(197,160,89,0.3)]"
       >
         <Scissors className="h-5 w-5" />
         Reservar turno
+      </a>
+
+      <a
+        href="#servicios"
+        className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 animate-bounce text-gold/60 transition hover:text-gold"
+        aria-label="Ver servicios"
+      >
+        <ChevronDown className="h-7 w-7" />
       </a>
     </section>
   )
