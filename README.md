@@ -69,7 +69,28 @@ alter table appointments enable row level security;
 create policy "Allow public read" on appointments for select to anon using (true);
 create policy "Allow public insert" on appointments for insert to anon with check (true);
 create policy "Allow public delete" on appointments for delete to anon using (true);
+
+-- Tabla para vincular email de Auth con el barbero
+create table barber_profiles (
+  email text primary key,
+  barber_id text not null,
+  name text not null
+);
+
+alter table barber_profiles enable row level security;
+
+create policy "Allow public read barber_profiles"
+  on barber_profiles for select to anon using (true);
+
+insert into barber_profiles (email, barber_id, name) values
+  ('reyjulian@rustic.com', 'rey-julian', 'Rey Julian'),
+  ('carajaula@rustic.com', 'cara-jaula', 'Cara Jaula'),
+  ('saraza@rustic.com', 'saraza-del-sabor', 'El Saraza del Sabor');
 ```
+
+Después, en Supabase andá a **Authentication → Users → Add user / Invite** y creá los tres usuarios con esos emails y contraseña `agus`.
+
+También desactivá la confirmación por email en **Authentication → Providers → Email → Confirm email = off**, o usá un email real para cada barbero.
 
 Las credenciales de conexión están en `lib/supabase.ts` y también se pueden configurar mediante variables de entorno:
 

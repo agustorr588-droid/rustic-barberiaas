@@ -1,20 +1,26 @@
-import { barbers } from './config'
+import { supabase } from './supabase'
 
 const AUTH_KEY = 'rustic-barber-auth'
 
 export type Barber = {
   id: string
   name: string
-  username: string
+  email: string
 }
 
-export function loginBarber(username: string, password: string): Barber | null {
-  const barber = barbers.find(
-    (b) => b.username.toLowerCase() === username.trim().toLowerCase() && b.password === password
-  )
-  if (!barber) return null
+export async function loginBarber(email: string, password: string): Promise<Barber | null> {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+  if (error || !data.user) return null
 
-  const session: Barber = { id: barber.id, name: barber.name, username: barber.username }
+  const { data: profile } = await supabase
+    .from('barber_profiles')
+    .select('barber_id, name')
+    .eq('email', email)
+    .single()
+
+  if (!profile) return null
+
+  const session: Barber = { id: profile.barber_id, name: profile.name, email }
   if (typeof window !== 'undefined') {
     sessionStorage.setItem(AUTH_KEY, JSON.stringify(session))
   }
@@ -25,6 +31,7 @@ export function logoutBarber() {
   if (typeof window !== 'undefined') {
     sessionStorage.removeItem(AUTH_KEY)
   }
+  supabase.auth.signOut().catch(() => {})
 }
 
 export function getCurrentBarber(): Barber | null {

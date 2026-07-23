@@ -7,17 +7,25 @@ import { loginBarber } from '@/lib/barberAuth'
 
 export default function BarberLogin() {
   const router = useRouter()
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const barber = loginBarber(username, password)
-    if (barber) {
-      router.push('/dashboard')
-    } else {
-      setError('Usuario o contraseña incorrectos.')
+    if (loading) return
+    setLoading(true)
+    setError('')
+    try {
+      const barber = await loginBarber(email, password)
+      if (barber) {
+        router.push('/dashboard')
+      } else {
+        setError('Email o contraseña incorrectos.')
+      }
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -38,13 +46,13 @@ export default function BarberLogin() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-cream">
-            <User className="h-4 w-4 text-gold" /> Usuario
+            <User className="h-4 w-4 text-gold" /> Email
           </label>
           <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="reyjulian"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="reyjulian@rustic.com"
             className="input-wood w-full"
           />
         </div>
@@ -68,18 +76,31 @@ export default function BarberLogin() {
           </div>
         )}
 
-        <button type="submit" className="btn-rustic w-full text-lg font-bold">
-          <LogIn className="h-5 w-5" />
-          Ingresar
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn-rustic w-full text-lg font-bold disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {loading ? (
+            <span className="inline-flex items-center gap-2">
+              <span className="h-5 w-5 animate-spin rounded-full border-2 border-wood-900 border-t-transparent" />
+              Ingresando...
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-2">
+              <LogIn className="h-5 w-5" />
+              Ingresar
+            </span>
+          )}
         </button>
       </form>
 
       <div className="mt-6 rounded-xl border border-gold/10 bg-wood-900/50 p-4 text-xs text-cream/60">
-        <p className="mb-2 font-semibold text-gold">Usuarios de prueba:</p>
+        <p className="mb-2 font-semibold text-gold">Cuentas de prueba:</p>
         <ul className="space-y-1">
-          <li>reyjulian / agus</li>
-          <li>carajaula / agus</li>
-          <li>saraza / agus</li>
+          <li>reyjulian@rustic.com / agus</li>
+          <li>carajaula@rustic.com / agus</li>
+          <li>saraza@rustic.com / agus</li>
         </ul>
       </div>
     </div>
