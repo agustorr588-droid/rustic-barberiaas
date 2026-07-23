@@ -18,11 +18,11 @@ export default function BarberLogin() {
     setLoading(true)
     setError('')
     try {
-      const barber = await loginBarber(email, password)
-      if (barber) {
+      const result = await loginBarber(email, password)
+      if (result.success) {
         router.push('/dashboard')
       } else {
-        setError('Email o contraseña incorrectos.')
+        setError(result.message)
       }
     } finally {
       setLoading(false)
@@ -96,12 +96,8 @@ export default function BarberLogin() {
       </form>
 
       <div className="mt-6 rounded-xl border border-gold/10 bg-wood-900/50 p-4 text-xs text-cream/60">
-        <p className="mb-2 font-semibold text-gold">Cuentas de prueba:</p>
-        <ul className="space-y-1">
-          <li>reyjulian@rustic.com / agus</li>
-          <li>carajaula@rustic.com / agus</li>
-          <li>saraza@rustic.com / agus</li>
-        </ul>
+        <p className="font-semibold text-gold">Acceso exclusivo para barberos</p>
+        <p className="mt-1">Usá el email completo asignado por la barbería.</p>
       </div>
     </div>
   )

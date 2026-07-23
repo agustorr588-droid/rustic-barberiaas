@@ -8,9 +8,21 @@ export type Barber = {
   email: string
 }
 
-export async function loginBarber(email: string, password: string): Promise<Barber | null> {
+export type LoginResult =
+  | { success: true; barber: Barber }
+  | { success: false; message: string }
+
+export async function loginBarber(email: string, password: string): Promise<LoginResult> {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-  if (error || !data.user) return null
+  if (error) {
+    if (error.message.toLowerCase().includes('email not confirmed')) {
+      return { success: false, message: 'El email aún no fue confirmado. Desactivá la confirmación por email en Supabase o usá un email real.' }
+    }
+    return { success: false, message: 'Email o contraseña incorrectos.' }
+  }
+  if (!data.user) {
+    return { success: false, message: 'No se pudo iniciar sesión.' }
+  }
 
   const { data: profile } = await supabase
     .from('barber_profiles')
@@ -18,13 +30,15 @@ export async function loginBarber(email: string, password: string): Promise<Barb
     .eq('email', email)
     .single()
 
-  if (!profile) return null
-
-  const session: Barber = { id: profile.barber_id, name: profile.name, email }
-  if (typeof window !== 'undefined') {
-    sessionStorage.setItem(AUTH_KEY, JSON.stringify(session))
+  if (!profile) {
+    return { success: false, message: 'Este usuario no está vinculado a ningún barbero.' }
   }
-  return session
+
+  const barber: Barber = { id: profile.barber_id, name: profile.name, email }
+  if (typeof window !== 'undefined') {
+    sessionStorage.setItem(AUTH_KEY, JSON.stringify(barber))
+  }
+  return { success: true, barber }
 }
 
 export function logoutBarber() {
