@@ -46,9 +46,30 @@ Si querés usar tu propio proyecto de Supabase, creá una tabla llamada `appoint
 | date        | text      | formato YYYY-MM-DD              |
 | time        | text      | formato HH:MM                   |
 | service_id  | text      |                                 |
+| barber_id   | text      |                                 |
 | price       | int4      |                                 |
 
-Y activá las políticas de seguridad (RLS) para permitir lectura, inserción y eliminación pública.
+Ejecutá este SQL en **SQL Editor** de Supabase:
+
+```sql
+create table appointments (
+  id uuid default gen_random_uuid() primary key,
+  created_at timestamp with time zone default now(),
+  name text not null,
+  phone text not null,
+  date text not null,
+  time text not null,
+  service_id text not null,
+  barber_id text not null,
+  price integer not null
+);
+
+alter table appointments enable row level security;
+
+create policy "Allow public read" on appointments for select to anon using (true);
+create policy "Allow public insert" on appointments for insert to anon with check (true);
+create policy "Allow public delete" on appointments for delete to anon using (true);
+```
 
 Las credenciales de conexión están en `lib/supabase.ts` y también se pueden configurar mediante variables de entorno:
 

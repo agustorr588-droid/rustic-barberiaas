@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Trash2, Calendar, Clock, User, DollarSign, ListChecks, Loader2 } from 'lucide-react'
-import { services } from '@/lib/config'
+import { Trash2, Calendar, Clock, User, DollarSign, ListChecks, Loader2, Scissors } from 'lucide-react'
+import { services, barbers } from '@/lib/config'
 import { getAppointments, deleteAppointment, formatDate, type Appointment } from '@/lib/appointments'
 
 export default function AppointmentList({
@@ -45,6 +45,7 @@ export default function AppointmentList({
   }
 
   const serviceName = (id: string) => services.find((s) => s.id === id)?.name ?? id
+  const barberName = (id: string) => barbers.find((b) => b.id === id)?.name ?? id
 
   const header = (
     <div className="relative flex items-center gap-3">
@@ -115,6 +116,9 @@ export default function AppointmentList({
               </p>
               <p className="flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-gold" /> ${a.price} — {serviceName(a.serviceId)}
+              </p>
+              <p className="flex items-center gap-2">
+                <Scissors className="h-4 w-4 text-gold" /> {barberName(a.barberId)}
               </p>
             </div>
             <button

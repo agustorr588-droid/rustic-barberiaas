@@ -7,6 +7,7 @@ export type Appointment = {
   date: string
   time: string
   serviceId: string
+  barberId: string
   price: number
   created_at?: string
 }
@@ -44,6 +45,7 @@ export async function getAppointments(): Promise<Appointment[]> {
     date: item.date,
     time: item.time,
     serviceId: item.service_id,
+    barberId: item.barber_id,
     price: item.price,
     created_at: item.created_at,
   }))
@@ -56,6 +58,7 @@ export async function addAppointment(appointment: AppointmentInsert): Promise<vo
     date: appointment.date,
     time: appointment.time,
     service_id: appointment.serviceId,
+    barber_id: appointment.barberId,
     price: appointment.price,
   })
 
@@ -74,12 +77,17 @@ export async function deleteAppointment(id: string): Promise<void> {
   }
 }
 
-export async function isSlotAvailable(date: string, time: string): Promise<boolean> {
+export async function isSlotAvailable(
+  date: string,
+  time: string,
+  barberId: string
+): Promise<boolean> {
   const { count, error } = await supabase
     .from('appointments')
     .select('*', { count: 'exact', head: true })
     .eq('date', date)
     .eq('time', time)
+    .eq('barber_id', barberId)
 
   if (error) {
     console.error('Error al verificar disponibilidad:', error)
@@ -87,4 +95,33 @@ export async function isSlotAvailable(date: string, time: string): Promise<boole
   }
 
   return count === 0
+}
+
+export async function getAppointmentsByBarber(
+  barberId: string,
+  date: string
+): Promise<Appointment[]> {
+  const { data, error } = await supabase
+    .from('appointments')
+    .select('*')
+    .eq('barber_id', barberId)
+    .eq('date', date)
+    .order('time', { ascending: true })
+
+  if (error) {
+    console.error('Error al obtener turnos del barbero:', error)
+    throw new Error('No se pudieron cargar los turnos del barbero.')
+  }
+
+  return (data || []).map((item) => ({
+    id: item.id,
+    name: item.name,
+    phone: item.phone,
+    date: item.date,
+    time: item.time,
+    serviceId: item.service_id,
+    barberId: item.barber_id,
+    price: item.price,
+    created_at: item.created_at,
+  }))
 }

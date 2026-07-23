@@ -1,4 +1,4 @@
-import { Phone, MapPin, Clock, Instagram, Facebook, Scissors } from 'lucide-react'
+import { Phone, MapPin, Clock, Instagram, Facebook, Scissors, LogIn } from 'lucide-react'
 import { business } from '@/lib/config'
 import Divider from './Divider'
 
@@ -54,6 +54,14 @@ export default function Footer() {
             <Instagram className="h-3.5 w-3.5" />
             <Facebook className="h-3.5 w-3.5" />
             <span>Seguinos en redes</span>
+          </p>
+          <p className="mt-3">
+            <a
+              href="/login"
+              className="inline-flex items-center gap-1 text-gold/60 transition hover:text-gold"
+            >
+              <LogIn className="h-3.5 w-3.5" /> Acceso barberos
+            </a>
           </p>
         </div>
       </div>

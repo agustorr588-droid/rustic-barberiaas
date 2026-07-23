@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { CalendarDays, Clock, User, Phone, CheckCircle, Sparkles } from 'lucide-react'
-import { services, appointment as appointmentConfig } from '@/lib/config'
+import { CalendarDays, Clock, User, Phone, CheckCircle, Sparkles, Scissors } from 'lucide-react'
+import { services, appointment as appointmentConfig, barbers } from '@/lib/config'
 import { addAppointment, isSlotAvailable, type Appointment } from '@/lib/appointments'
 
 export default function AppointmentForm({ onSaved }: { onSaved: () => void }) {
@@ -14,6 +14,7 @@ export default function AppointmentForm({ onSaved }: { onSaved: () => void }) {
     date: today,
     time: '',
     serviceId: services[0]?.id ?? '',
+    barberId: barbers[0]?.id ?? '',
   })
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
@@ -45,7 +46,7 @@ export default function AppointmentForm({ onSaved }: { onSaved: () => void }) {
     e.preventDefault()
     if (loading) return
 
-    if (!form.name.trim() || !form.phone.trim() || !form.date || !form.time || !form.serviceId) {
+    if (!form.name.trim() || !form.phone.trim() || !form.date || !form.time || !form.serviceId || !form.barberId) {
       setStatus('error')
       setMessage('Completá todos los campos para confirmar tu turno.')
       return
@@ -53,10 +54,10 @@ export default function AppointmentForm({ onSaved }: { onSaved: () => void }) {
 
     setLoading(true)
     try {
-      const available = await isSlotAvailable(form.date, form.time)
+      const available = await isSlotAvailable(form.date, form.time, form.barberId)
       if (!available) {
         setStatus('error')
-        setMessage('Ese horario ya está reservado. Por favor elegí otro.')
+        setMessage('Ese horario ya está reservado con ese barbero. Por favor elegí otro.')
         return
       }
 
@@ -66,12 +67,13 @@ export default function AppointmentForm({ onSaved }: { onSaved: () => void }) {
         date: form.date,
         time: form.time,
         serviceId: form.serviceId,
+        barberId: form.barberId,
         price: selectedService?.price ?? 0,
       })
 
       setStatus('success')
       setMessage('¡Turno reservado con éxito! Te esperamos en Rustic.')
-      setForm({ name: '', phone: '', date: today, time: '', serviceId: services[0]?.id ?? '' })
+      setForm({ name: '', phone: '', date: today, time: '', serviceId: services[0]?.id ?? '', barberId: barbers[0]?.id ?? '' })
       onSaved()
     } catch (err) {
       setStatus('error')
@@ -177,6 +179,24 @@ export default function AppointmentForm({ onSaved }: { onSaved: () => void }) {
             {services.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name} — ${s.price}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-cream">
+            <Scissors className="h-4 w-4 text-gold" /> Barbero
+          </label>
+          <select
+            name="barberId"
+            value={form.barberId}
+            onChange={handleChange}
+            className="select-wood appearance-none"
+          >
+            {barbers.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name}
               </option>
             ))}
           </select>
