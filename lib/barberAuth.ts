@@ -34,13 +34,12 @@ export async function loginBarber(email: string, password: string): Promise<Logi
     return { success: false, message: 'No se pudo iniciar sesión.' }
   }
 
-  // Buscamos el perfil por email exacto o por auth_user_id
-  let query = supabase
+  // Buscamos el perfil sin importar mayúsculas/minúsculas
+  const { data: profile } = await supabase
     .from('barber_profiles')
     .select('barber_id, name, email')
-    .eq('email', cleanEmail)
-
-  const { data: profile } = await query.single()
+    .ilike('email', cleanEmail)
+    .single()
 
   if (!profile) {
     return { success: false, message: 'Este usuario no está vinculado a ningún barbero. Verificá que exista en la tabla barber_profiles.' }
