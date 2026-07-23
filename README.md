@@ -92,17 +92,28 @@ Después, en Supabase andá a **Authentication → Users → Add user / Invite**
 
 También desactivá la confirmación por email en **Authentication → Providers → Email → Confirm email = off**, o usá un email real para cada barbero.
 
-Las credenciales de conexión están en `lib/supabase.ts` y también se pueden configurar mediante variables de entorno:
+Las credenciales de conexión se configuran mediante variables de entorno. Copiá el archivo `.env.local.example` a `.env.local` y completá tus datos:
+
+```bash
+cp .env.local.example .env.local
+```
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://kdshmqncqrucbeedcspw.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_NfrPjiUp-0iMPPP0KruAqA_I7JPjGZ7
 ```
 
+El archivo `.env.local` no se sube a GitHub (está en `.gitignore`).
+
+En Vercel, agregá estas variables en **Project Settings → Environment Variables**.
+
+**Importante:** la `anon key` de Supabase es pública por diseño y se usa desde el navegador. Siempre configurá políticas RLS restrictivas en tus tablas para que nadie pueda leer ni modificar datos que no deba. La `service_role` key (secreta) nunca debe usarse en el frontend.
+
 ## Cómo correrlo en local
 
 1. Asegurate de tener **Node.js** instalado (versión LTS recomendada).
-2. Desde la carpeta del proyecto instalá las dependencias:
+2. Creá el archivo `.env.local` con tus credenciales de Supabase.
+3. Desde la carpeta del proyecto instalá las dependencias:
 
 ```bash
 npm install
