@@ -35,9 +35,9 @@ export const services = [
 ]
 
 export const barbers = [
-  { id: 'rey-julian', name: 'Rey Julian' },
-  { id: 'cara-jaula', name: 'Cara Jaula' },
-  { id: 'saraza-del-sabor', name: 'El Saraza del Sabor' },
+  { id: 'rey-julian', name: 'Rey Julian', email: 'reyjulian@rustic.com' },
+  { id: 'cara-jaula', name: 'Cara Jaula', email: 'carajaula@rustic.com' },
+  { id: 'saraza-del-sabor', name: 'El Saraza del Sabor', email: 'saraza@rustic.com' },
 ] as const
 
 export const appointment = {

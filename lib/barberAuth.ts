@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { barbers } from './config'
 
 const AUTH_KEY = 'rustic-barber-auth'
 
@@ -12,13 +13,17 @@ export type LoginResult =
   | { success: true; barber: Barber }
   | { success: false; message: string }
 
+function findBarberByEmail(email: string): Barber | null {
+  const b = barbers.find((x) => x.email.toLowerCase() === email.toLowerCase())
+  return b ? { id: b.id, name: b.name, email: b.email } : null
+}
+
 export async function loginBarber(email: string, password: string): Promise<LoginResult> {
   const cleanEmail = email.trim().toLowerCase()
   const { data, error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password })
 
   if (error) {
-    // Logueamos el error exacto para poder depurar desde la consola del navegador
-    console.error('[loginBarber] Supabase error:', error.message)
+    console.error('[loginBarber] Supabase auth error:', error.message)
 
     const msg = error.message.toLowerCase()
     if (msg.includes('email not confirmed') || msg.includes('not confirmed')) {
@@ -34,30 +39,41 @@ export async function loginBarber(email: string, password: string): Promise<Logi
     return { success: false, message: 'No se pudo iniciar sesión.' }
   }
 
-  // Buscamos el perfil sin importar mayúsculas/minúsculas
-  const { data: profile, error: profileError } = await supabase
-    .from('barber_profiles')
-    .select('barber_id, name, email')
-    .ilike('email', cleanEmail)
-    .maybeSingle()
+  // Primero intentamos leer desde Supabase
+  try {
+    const { data: rows, error: profileError } = await supabase
+      .from('barber_profiles')
+      .select('barber_id, name, email')
+      .eq('email', cleanEmail)
+      .limit(1)
 
-  console.log('[loginBarber] cleanEmail:', cleanEmail)
-  console.log('[loginBarber] profile:', profile)
-  console.log('[loginBarber] profileError:', profileError)
+    if (profileError) {
+      console.error('[loginBarber] Supabase profile error:', profileError.message)
+    }
 
-  if (profileError) {
-    return { success: false, message: `Error al leer el perfil: ${profileError.message}` }
+    if (rows && rows.length > 0) {
+      const profile = rows[0]
+      const barber: Barber = { id: profile.barber_id, name: profile.name, email: cleanEmail }
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem(AUTH_KEY, JSON.stringify(barber))
+      }
+      return { success: true, barber }
+    }
+  } catch (err) {
+    console.error('[loginBarber] Exception reading profile:', err)
   }
 
-  if (!profile) {
-    return { success: false, message: 'Este usuario no está vinculado a ningún barbero. Verificá que exista en la tabla barber_profiles.' }
+  // Fallback: buscar localmente en config.ts
+  const fallbackBarber = findBarberByEmail(cleanEmail)
+  if (fallbackBarber) {
+    console.warn('[loginBarber] Usando fallback local para barbero:', fallbackBarber.email)
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem(AUTH_KEY, JSON.stringify(fallbackBarber))
+    }
+    return { success: true, barber: fallbackBarber }
   }
 
-  const barber: Barber = { id: profile.barber_id, name: profile.name, email }
-  if (typeof window !== 'undefined') {
-    sessionStorage.setItem(AUTH_KEY, JSON.stringify(barber))
-  }
-  return { success: true, barber }
+  return { success: false, message: 'Este usuario no está vinculado a ningún barbero. Verificá que exista en la tabla barber_profiles.' }
 }
 
 export function logoutBarber() {
