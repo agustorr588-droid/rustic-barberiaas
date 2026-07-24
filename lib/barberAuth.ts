@@ -30,7 +30,7 @@ export async function loginBarber(email: string, password: string): Promise<Logi
       return { success: false, message: 'El email aún no fue confirmado. En Supabase andá a Authentication → Providers → Email y desactivá "Confirm email".' }
     }
     if (msg.includes('invalid login credentials')) {
-      return { success: false, message: 'Email o contraseña incorrectos. Verificá que la contraseña sea exactamente "agus" y que el email esté confirmado en Supabase.' }
+      return { success: false, message: 'Email o contraseña incorrectos. Verificá los datos e intentá de nuevo.' }
     }
     return { success: false, message: `No se pudo iniciar sesión: ${error.message}` }
   }

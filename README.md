@@ -88,7 +88,7 @@ insert into barber_profiles (email, barber_id, name) values
   ('saraza@rustic.com', 'saraza-del-sabor', 'El Saraza del Sabor');
 ```
 
-Después, en Supabase andá a **Authentication → Users → Add user / Invite** y creá los tres usuarios con esos emails y contraseña `agus`.
+Después, en Supabase andá a **Authentication → Users → Add user / Invite** y creá los tres usuarios con esos emails y asigná una contraseña desde el panel.
 
 También desactivá la confirmación por email en **Authentication → Providers → Email → Confirm email = off**, o usá un email real para cada barbero.
 
