@@ -33,7 +33,7 @@ const phrases = [
 
 export default function Gallery() {
   return (
-    <section className="relative px-4 py-24 accent-ribbon">
+    <section id="galeria" className="relative px-4 py-24 accent-ribbon">
       <div className="pointer-events-none absolute inset-0 bg-wood-pattern opacity-20" />
       <div className="relative mx-auto max-w-6xl">
         <div className="mb-12 flex flex-col items-center gap-4">
