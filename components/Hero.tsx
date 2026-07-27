@@ -50,7 +50,7 @@ export default function Hero() {
 
         <div className="hero-premium-media">
           <div className="hero-premium-glow" aria-hidden="true" />
-          <HeroAnimation frames={frames} targetFps={24} />
+          <HeroAnimation frames={frames} />
         </div>
       </div>
     </section>

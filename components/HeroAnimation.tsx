@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react'
 
 interface HeroAnimationProps {
   frames: string[]
-  targetFps?: number
 }
 
 const TARGET_WIDTH = 600
@@ -45,13 +44,14 @@ function chromaKey(image: HTMLImageElement): ImageData {
   return ctx.getImageData(0, 0, canvas.width, canvas.height)
 }
 
-export default function HeroAnimation({ frames, targetFps = 24 }: HeroAnimationProps) {
+export default function HeroAnimation({ frames }: HeroAnimationProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const wrapperRef = useRef<HTMLDivElement>(null)
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
   const frameDataRef = useRef<ImageData[]>([])
   const rafRef = useRef<number>(0)
-  const lastDrawRef = useRef<number>(0)
-  const indexRef = useRef<number>(0)
+  const progressRef = useRef<number>(0)
+  const currentIndexRef = useRef<number>(-1)
 
   useEffect(() => {
     if (!frames.length) {
@@ -105,7 +105,8 @@ export default function HeroAnimation({ frames, targetFps = 24 }: HeroAnimationP
     if (status !== 'ready') return
 
     const canvas = canvasRef.current
-    if (!canvas) return
+    const wrapper = wrapperRef.current
+    if (!canvas || !wrapper) return
 
     const ctx = canvas.getContext('2d')
     if (!ctx) return
@@ -117,23 +118,46 @@ export default function HeroAnimation({ frames, targetFps = 24 }: HeroAnimationP
     canvas.width = first.width
     canvas.height = first.height
 
-    const frameDuration = 1000 / targetFps
+    const drawFrame = () => {
+      const frameCount = frameData.length
+      const index = Math.min(
+        Math.max(Math.floor(progressRef.current * frameCount), 0),
+        frameCount - 1
+      )
 
-    const loop = (now: number) => {
-      if (now - lastDrawRef.current >= frameDuration) {
-        lastDrawRef.current = now
-        const frame = frameData[indexRef.current]
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-        ctx.putImageData(frame, 0, 0)
-        indexRef.current = (indexRef.current + 1) % frameData.length
-      }
-      rafRef.current = requestAnimationFrame(loop)
+      if (index === currentIndexRef.current) return
+      currentIndexRef.current = index
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.putImageData(frameData[index], 0, 0)
     }
 
-    rafRef.current = requestAnimationFrame(loop)
+    const updateProgress = () => {
+      if (!wrapper) return
+      const rect = wrapper.getBoundingClientRect()
+      const viewportHeight = window.innerHeight
+      const elementHeight = rect.height
 
-    return () => cancelAnimationFrame(rafRef.current)
-  }, [status, targetFps])
+      // Progress goes from 0 (element top at viewport bottom) to 1 (element bottom at viewport top)
+      const start = viewportHeight
+      const end = -elementHeight
+      const distance = start - end
+      const value = (start - rect.top) / distance
+
+      progressRef.current = Math.min(Math.max(value, 0), 1)
+      rafRef.current = requestAnimationFrame(drawFrame)
+    }
+
+    updateProgress()
+    window.addEventListener('scroll', updateProgress, { passive: true })
+    window.addEventListener('resize', updateProgress, { passive: true })
+
+    return () => {
+      cancelAnimationFrame(rafRef.current)
+      window.removeEventListener('scroll', updateProgress)
+      window.removeEventListener('resize', updateProgress)
+    }
+  }, [status])
 
   if (status === 'loading') {
     return (
@@ -154,10 +178,12 @@ export default function HeroAnimation({ frames, targetFps = 24 }: HeroAnimationP
   }
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="hero-animation-canvas"
-      aria-label="Animación de transformación de corte de pelo"
-    />
+    <div ref={wrapperRef} className="hero-animation-wrapper">
+      <canvas
+        ref={canvasRef}
+        className="hero-animation-canvas"
+        aria-label="Animación de transformación de corte de pelo"
+      />
+    </div>
   )
 }
