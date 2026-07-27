@@ -590,3 +590,182 @@ body {
     visibility: visible !important;
   }
 }
+
+/* ============================================= */
+/* ===== HERO PREMIUM (frames animation) ===== */
+/* ============================================= */
+.hero-premium {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  background: var(--wood-dark);
+}
+
+.hero-premium-gradient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(197, 160, 89, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 70%, rgba(139, 90, 43, 0.22) 0%, transparent 50%),
+    linear-gradient(180deg, #1a120e 0%, #0f0a08 100%);
+  opacity: 1;
+}
+
+.hero-premium::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c5a059' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.7;
+}
+
+.hero-premium-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 120px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+@media (min-width: 1024px) {
+  .hero-premium-inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 140px 64px 100px;
+    gap: 64px;
+  }
+}
+
+.hero-premium-content {
+  max-width: 600px;
+}
+
+.hero-premium-eyebrow {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.hero-premium-headline {
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--cream);
+}
+
+.hero-premium-description {
+  margin-top: 24px;
+  max-width: 480px;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--cream);
+  opacity: 0.8;
+}
+
+.hero-premium-actions {
+  margin-top: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.hero-premium-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 32px;
+  border-radius: 9999px;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.hero-premium-btn-primary {
+  background: var(--gold);
+  color: var(--wood-dark);
+  box-shadow: 0 8px 28px rgba(197, 160, 89, 0.28);
+}
+
+.hero-premium-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(197, 160, 89, 0.38);
+  background: #d4b06a;
+}
+
+.hero-premium-btn-secondary {
+  background: transparent;
+  color: var(--cream);
+  border: 1px solid rgba(244, 241, 232, 0.25);
+}
+
+.hero-premium-btn-secondary:hover {
+  background: rgba(244, 241, 232, 0.08);
+  border-color: rgba(244, 241, 232, 0.4);
+}
+
+.hero-premium-media {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .hero-premium-media { height: 520px; }
+}
+
+@media (min-width: 1024px) {
+  .hero-premium-media {
+    width: 45%;
+    height: 640px;
+    flex-shrink: 0;
+  }
+}
+
+.hero-premium-glow {
+  position: absolute;
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(197, 160, 89, 0.22) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.hero-animation-canvas {
+  position: relative;
+  z-index: 1;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.45));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-premium-media { display: none; }
+}
