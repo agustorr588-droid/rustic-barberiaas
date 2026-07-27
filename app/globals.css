@@ -497,7 +497,7 @@ body {
 
 .hero-big-text {
   position: absolute;
-  bottom: -30px;
+  bottom: 0;
   left: 0;
   right: 0;
   z-index: 2;
@@ -505,7 +505,7 @@ body {
   width: 100%;
   text-align: center;
 }
-@media (min-width: 768px) { .hero-big-text { bottom: -40px; } }
+@media (min-width: 768px) { .hero-big-text { bottom: 20px; } }
 .hero-big-text h2 {
   font-weight: 500;
   color: #F4F1E8;
