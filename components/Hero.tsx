@@ -3,17 +3,18 @@ import path from 'path'
 import HeroAnimation from './HeroAnimation'
 import { business } from '@/lib/config'
 
+function extractFrameNumber(name: string): number {
+  const digits = name.replace(/^.*?(\d+).*?\.[^.]+$/i, '$1')
+  return parseInt(digits || '0', 10)
+}
+
 function getFrameUrls(): string[] {
   const framesDir = path.join(process.cwd(), 'public', 'frames')
   try {
     const files = fs.readdirSync(framesDir)
     return files
-      .filter((f) => /^\d+\.jpe?g$/i.test(f))
-      .sort((a, b) => {
-        const na = parseInt(a.replace(/\.jpe?g$/i, ''), 10)
-        const nb = parseInt(b.replace(/\.jpe?g$/i, ''), 10)
-        return na - nb
-      })
+      .filter((f) => /^\d+\.(jpe?g|png)$/i.test(f))
+      .sort((a, b) => extractFrameNumber(a) - extractFrameNumber(b))
       .map((f) => `/frames/${f}`)
   } catch {
     return []
